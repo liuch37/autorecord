@@ -1,10 +1,11 @@
-'''
+"""
 This code is the main function to record desktop screenshot and save it as a video.
-'''
+"""
 import cv2
 import numpy as np
 import pyautogui as pg
 import pdb
+
 
 def main():
     # get primary monitor screen size
@@ -35,6 +36,7 @@ def main():
 
     # make sure everything is closed when exited
     out.release()
+
 
 if __name__ == "__main__":
     main()
