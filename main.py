@@ -25,13 +25,13 @@ def main():
     arec = AudioRecorder(output_name=aoutput_name, rate=rate)
     # create video thread and start recording
     print("Start recording......")
-    rec.start()
+    vrec.start()
     arec.start()
     while True:
         # catch keyboard key 'q' to stop recording
         if msvcrt.kbhit() and msvcrt.getch() == b"q":
             print("Stop recording......")
-            rec.stop()
+            vrec.stop()
             arec.stop()
             break
 
