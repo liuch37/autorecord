@@ -9,6 +9,7 @@ import pyautogui as pg
 
 class ScreenRecorder:
     def __init__(self, output_name, fps):
+        self.open = True
         self.output_name = output_name
         self.screen_size = tuple(pg.size())
         self.fps = fps
@@ -19,9 +20,7 @@ class ScreenRecorder:
         print("Screen size {}, fps {}".format(self.screen_size, self.fps))
 
     def record(self):
-        # get current thread
-        t = threading.currentThread()
-        while getattr(t, "do_run", True):
+        while self.open == True:
             # make a screenshot
             img = pg.screenshot()
             # convert to numpy array for opencv processing
@@ -30,9 +29,15 @@ class ScreenRecorder:
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             # write the frame
             self.out.write(frame)
-        # clean up object
-        self.out.release()
 
     def start(self):
         video_thread = threading.Thread(target=self.record)
         video_thread.start()
+
+    def stop(self):
+        if self.open == True:
+            self.open = False
+            # clean up object
+            self.out.release()
+        else:
+            pass
