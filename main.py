@@ -7,23 +7,32 @@ import pyautogui as pg
 import threading
 import msvcrt
 from videorecord import ScreenRecorder
+from audiorecord import AudioRecorder
 
 
 def main():
     # frame per second
     FPS = 6.0
     # output video name and type
-    output_name = "output.mp4"
+    voutput_name = "output.mp4"
+    # output audio name and type
+    aoutput_name = "audio.wav"
+    # audio sampling rate
+    rate = 44100
     # create screen recorder object
-    rec = ScreenRecorder(output_name=output_name, fps=FPS)
+    vrec = ScreenRecorder(output_name=voutput_name, fps=FPS)
+    # create audio recorder object
+    arec = AudioRecorder(output_name=aoutput_name, rate=rate)
     # create video thread and start recording
     print("Start recording......")
     rec.start()
+    arec.start()
     while True:
         # catch keyboard key 'q' to stop recording
         if msvcrt.kbhit() and msvcrt.getch() == b"q":
             print("Stop recording......")
             rec.stop()
+            arec.stop()
             break
 
 

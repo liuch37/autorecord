@@ -1,25 +1,27 @@
 """
 Create one thread for audio recording.
 """
+import threading
 import pyaudio
 import wave
 
 
 class AudioRecorder:
     # Audio class based on pyaudio and wave
-    def __init__(self):
+    def __init__(self, output_name, rate):
         self.open = True
-        self.rate = 44100
+        self.rate = rate
         self.frames_per_buffer = 1024
         self.channels = 2
         self.format = pyaudio.paInt16
-        self.audio_filename = "audio.wav"
+        self.audio_filename = output_name
         self.audio = pyaudio.PyAudio()
         self.stream = self.audio.open(
             format=self.format,
             channels=self.channels,
             rate=self.rate,
             input=True,
+            input_device_index = 1,
             frames_per_buffer=self.frames_per_buffer,
         )
         self.audio_frames = []
