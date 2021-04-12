@@ -1,5 +1,5 @@
 # Autorecord
-Automatic recording for desktop video and audio. This repo only supports Windows system - only being tested on 64-bit Windows 10.
+Automatic recording for monitor screen video and its audio. This software only supports Windows system - only being tested on 64-bit Windows 10.
 
 ## Install
 
