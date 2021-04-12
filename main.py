@@ -20,7 +20,7 @@ def main():
     # select audio device index
     device_index = 5
     # create screen recorder object
-    #vrec = ScreenRecorder(output_name=voutput_name, fps=FPS)
+    vrec = ScreenRecorder(output_name=voutput_name, fps=FPS)
     # create audio recorder object
     arec = AudioRecorder(output_name=aoutput_name, input_device_index=device_index)
     # create video thread and start recording
