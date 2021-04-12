@@ -9,21 +9,28 @@ import wave
 def get_device_info(p, input_device_index):
     device_info = p.get_device_info_by_index(input_device_index)
     is_input = device_info["maxInputChannels"] > 0
-    is_wasapi = (p.get_host_api_info_by_index(device_info["hostApi"])["name"]).find("WASAPI") != -1
+    is_wasapi = (p.get_host_api_info_by_index(device_info["hostApi"])["name"]).find(
+        "WASAPI"
+    ) != -1
     useloopback = False
     if is_input:
-        print ("Selection is input using standard mode.")
+        print("Selection is input using standard mode.")
     else:
         if is_wasapi:
             useloopback = True
-            print ("Selection is output. Using loopback mode.")
+            print("Selection is output. Using loopback mode.")
         else:
-            print ("Selection is input and does not support loopback mode. Quitting.")
+            print("Selection is input and does not support loopback mode. Quitting.")
             exit()
-    channelcount = device_info["maxInputChannels"] if (device_info["maxOutputChannels"] < device_info["maxInputChannels"]) else device_info["maxOutputChannels"]
+    channelcount = (
+        device_info["maxInputChannels"]
+        if (device_info["maxOutputChannels"] < device_info["maxInputChannels"])
+        else device_info["maxOutputChannels"]
+    )
     rate = int(device_info["defaultSampleRate"])
 
     return channelcount, rate, useloopback
+
 
 class AudioRecorder:
     # Audio class based on pyaudio and wave
@@ -34,16 +41,18 @@ class AudioRecorder:
         self.format = pyaudio.paInt16
         self.audio_filename = output_name
         self.audio = pyaudio.PyAudio()
-        self.channels, self.rate, self.useloopback = get_device_info(self.audio, self.input_device_index)
+        self.channels, self.rate, self.useloopback = get_device_info(
+            self.audio, self.input_device_index
+        )
 
         self.stream = self.audio.open(
             format=self.format,
             channels=self.channels,
             rate=self.rate,
             input=True,
-            input_device_index = self.input_device_index,
+            input_device_index=self.input_device_index,
             frames_per_buffer=self.frames_per_buffer,
-            as_loopback = self.useloopback,
+            as_loopback=self.useloopback,
         )
         self.audio_frames = []
 

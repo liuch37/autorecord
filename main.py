@@ -18,7 +18,7 @@ def main():
     # output audio name and type
     aoutput_name = "audio.wav"
     # select audio device index
-    device_index = 5
+    device_index = 5  # default select device name: 'Speakers (Conexant ISST Audio)'
     # create screen recorder object
     vrec = ScreenRecorder(output_name=voutput_name, fps=FPS)
     # create audio recorder object
