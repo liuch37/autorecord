@@ -17,12 +17,12 @@ def main():
     voutput_name = "output.mp4"
     # output audio name and type
     aoutput_name = "audio.wav"
-    # audio sampling rate
-    rate = 44100
+    # select audio device index
+    device_index = 5
     # create screen recorder object
-    vrec = ScreenRecorder(output_name=voutput_name, fps=FPS)
+    #vrec = ScreenRecorder(output_name=voutput_name, fps=FPS)
     # create audio recorder object
-    arec = AudioRecorder(output_name=aoutput_name, rate=rate)
+    arec = AudioRecorder(output_name=aoutput_name, input_device_index=device_index)
     # create video thread and start recording
     print("Start recording......")
     vrec.start()
