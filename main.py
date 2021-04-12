@@ -4,6 +4,7 @@ This code is the main function to record desktop screenshot and save it as a vid
 import cv2
 import numpy as np
 import pyautogui as pg
+import ffmpeg
 import threading
 import msvcrt
 from videorecord import ScreenRecorder
@@ -34,6 +35,10 @@ def main():
             vrec.stop()
             arec.stop()
             break
+    print("Merge video and audio......")
+    input_video = ffmpeg.input(voutput_name)
+    input_audio = ffmpeg.input(aoutput_name)
+    ffmpeg.concat(input_video, input_audio, v=1, a=1).output('merge.mp4').run()
 
 
 if __name__ == "__main__":
