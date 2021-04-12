@@ -5,6 +5,7 @@ import threading
 import cv2
 import numpy as np
 import pyautogui as pg
+import time
 
 
 class ScreenRecorder:
@@ -18,8 +19,12 @@ class ScreenRecorder:
             self.output_name, self.fourcc, self.fps, self.screen_size
         )  # create video write object
         print("Screen size {}, fps {}".format(self.screen_size, self.fps))
+        self.frame_counts = 1
+        self.start_time = time.time()
+        self.elapsed_time = time.time()
 
     def record(self):
+        flag = True
         while self.open == True:
             # make a screenshot
             img = pg.screenshot()
@@ -27,8 +32,13 @@ class ScreenRecorder:
             frame = np.array(img)
             # convert colors from BGR to RGB
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            # above image processing delay ~ 0.25 s
             # write the frame
             self.out.write(frame)
+            if flag:
+                self.start_time = time.time()
+                flag = False
+            self.frame_counts += 1
 
     def start(self):
         video_thread = threading.Thread(target=self.record)
@@ -39,5 +49,11 @@ class ScreenRecorder:
             self.open = False
             # clean up object
             self.out.release()
+            self.elapsed_time = time.time() - self.start_time
+            frame_counts = self.frame_counts
+            recorded_fps = frame_counts / self.elapsed_time
+            print("Total video frames " + str(frame_counts))
+            print("Video elapsed time " + str(self.elapsed_time))
+            print("Video recorded fps " + str(recorded_fps))
         else:
             pass

@@ -13,7 +13,7 @@ from audiorecord import AudioRecorder
 
 def main():
     # frame per second
-    FPS = 6.0
+    FPS = 3.0
     # output video name and type
     voutput_name = "output.mp4"
     # output audio name and type
@@ -23,7 +23,7 @@ def main():
     # create screen recorder object
     vrec = ScreenRecorder(output_name=voutput_name, fps=FPS)
     # create audio recorder object
-    arec = AudioRecorder(output_name=aoutput_name, input_device_index=device_index)
+    arec = AudioRecorder(output_name=aoutput_name, input_device_index=device_index, fps=FPS)
     # create video thread and start recording
     print("Start recording......")
     vrec.start()
@@ -36,10 +36,14 @@ def main():
             arec.stop()
             break
     print("Merge video and audio......")
+    timing_adjustment = vrec.elapsed_time - arec.elapsed_time
+    if timing_adjustment < 0:
+        print("WARNING: Your recorded audio time is shorter than video time, which should not be correct. Check your frame rate for video.")
+    else:
+        print("Adjust timing of audio by delaying (s)", timing_adjustment)
     input_video = ffmpeg.input(voutput_name)
     input_audio = ffmpeg.input(aoutput_name)
     ffmpeg.concat(input_video, input_audio, v=1, a=1).output('merge.mp4').run()
-
 
 if __name__ == "__main__":
     main()

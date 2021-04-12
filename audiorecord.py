@@ -4,6 +4,7 @@ Create one thread for audio recording.
 import threading
 import pyaudio
 import wave
+import time
 
 
 def get_device_info(p, input_device_index):
@@ -34,9 +35,8 @@ def get_device_info(p, input_device_index):
 
 class AudioRecorder:
     # Audio class based on pyaudio and wave
-    def __init__(self, output_name, input_device_index):
+    def __init__(self, output_name, input_device_index, fps):
         self.open = True
-        self.frames_per_buffer = 1024
         self.input_device_index = input_device_index
         self.format = pyaudio.paInt16
         self.audio_filename = output_name
@@ -44,6 +44,9 @@ class AudioRecorder:
         self.channels, self.rate, self.useloopback = get_device_info(
             self.audio, self.input_device_index
         )
+        self.frames_per_buffer = int(self.rate / fps) # matching video fps
+        self.start_time = time.time()
+        self.elapsed_time = time.time()
 
         self.stream = self.audio.open(
             format=self.format,
@@ -58,9 +61,13 @@ class AudioRecorder:
 
     # Audio starts being recorded
     def record(self):
+        flag = True
         self.stream.start_stream()
         while self.open == True:
             data = self.stream.read(self.frames_per_buffer)
+            if flag:
+                self.start_time = time.time()
+                flag = False
             self.audio_frames.append(data)
             if self.open == False:
                 break
@@ -72,7 +79,9 @@ class AudioRecorder:
             self.stream.stop_stream()
             self.stream.close()
             self.audio.terminate()
-
+            self.elapsed_time = time.time() - self.start_time
+            print("Number of audio recorded frames: ", len(self.audio_frames))
+            print("Recorded audio time duration (s): ", self.elapsed_time)
             waveFile = wave.open(self.audio_filename, "wb")
             waveFile.setnchannels(self.channels)
             waveFile.setsampwidth(self.audio.get_sample_size(self.format))
