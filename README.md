@@ -3,17 +3,17 @@ Automatic recording for monitor screen video and its audio. This software only s
 
 ## Install
 
-### Create an virtual environment using conda with Python 3.7, i.e.,
+### Create an virtual environment using conda with Python 3.7
 ```
 conda create -n autorecord python=3.7
 ```
 
-### Install required python library:
+### Install required python library
 ```
 pip install -r requirements.txt
 ```
 
-### Install pyaudio library:
+### Install pyaudio library
 
 To install pyaudio, you need to download the modified version which supports loopback feature in pyaudio, in https://github.com/intxcc/pyaudio_portaudio. There are prebuild releases for Python 3.7 where you can download here https://github.com/intxcc/pyaudio_portaudio/releases, and then do pip install, i.e.,
 ```
