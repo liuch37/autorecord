@@ -17,7 +17,7 @@ def timing_adjust(vrec, arec):
     timing_adjustment = vrec.elapsed_time - arec.elapsed_time
     if timing_adjustment < 0:
         print(
-            "WARNING: Your recorded audio time is shorter than video time, which should not be correct. Check your frame rate for video."
+            "WARNING: Your recorded audio time is shorter than video time."
         )
         return 0
     else:
