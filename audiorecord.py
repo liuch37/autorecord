@@ -5,6 +5,7 @@ import threading
 import pyaudio
 import wave
 import time
+import math
 
 
 def get_device_info(p, input_device_index):
@@ -44,7 +45,7 @@ class AudioRecorder:
         self.channels, self.rate, self.useloopback = get_device_info(
             self.audio, self.input_device_index
         )
-        self.frames_per_buffer = int(self.rate / fps) # matching video fps
+        self.frames_per_buffer = math.ceil(self.rate / fps) # matching video fps
         self.start_time = time.time()
         self.elapsed_time = time.time()
 
