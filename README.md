@@ -45,7 +45,7 @@ python main.py --fps 3.0 --output record.mp4 --index 5
 
 --output: Output name for the final video being saved. The default is set to 'record.mp4'.
 
---index: Proper audio device index found in the first step.
+--index: Proper audio device index found in the first step. Try to find device index with name 'Speakers (Conexant ISST Audio)' if you want to record system sound coming out from default speaker.
 
 ### How to Stop Recording
 
