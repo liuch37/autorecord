@@ -89,7 +89,7 @@ def main():
     arec = AudioRecorder(
         output_name=aoutput_name, input_device_index=device_index, fps=FPS
     )
-    # create video thread and start recording
+    # start recording with both video and audio threads
     print("Start recording......")
     vrec.start()
     arec.start()
