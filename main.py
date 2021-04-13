@@ -41,9 +41,16 @@ def main():
         print("WARNING: Your recorded audio time is shorter than video time, which should not be correct. Check your frame rate for video.")
     else:
         print("Adjust timing of audio by delaying (s)", timing_adjustment)
+    # apply audio delay
+    #ffmpeg.exe -i "audio.wav" -itsoffset 10 -i "audio.wav" -map 1:a -c copy "audio-delayed.wav"
+
+    # merge audio and video
     input_video = ffmpeg.input(voutput_name)
     input_audio = ffmpeg.input(aoutput_name)
     ffmpeg.concat(input_video, input_audio, v=1, a=1).output('merge.mp4').run()
+    # cmd line
+    #cmd = "ffmpeg -ac 2 -channel_layout stereo -i temp_audio.wav -i temp_video.avi -pix_fmt yuv420p " + filename + ".avi"
+    #subprocess.call(cmd, shell=True)
 
 if __name__ == "__main__":
     main()
