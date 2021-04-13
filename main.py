@@ -53,12 +53,7 @@ def video_audio_merge(moutput_name, aoutput_name, voutput_name):
 
 def video_convert(moutput_name, voutput_name):
     # cmd line
-    cmd = (
-        "ffmpeg.exe -y -i "
-        + voutput_name
-        + " -pix_fmt yuv420p "
-        + moutput_name
-    )
+    cmd = "ffmpeg.exe -y -i " + voutput_name + " -pix_fmt yuv420p " + moutput_name
     subprocess.call(cmd, shell=True)
 
 
