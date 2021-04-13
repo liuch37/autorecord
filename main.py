@@ -8,6 +8,7 @@ import subprocess
 import threading
 import msvcrt
 import math
+import argparse
 from pydub import AudioSegment
 from videorecord import ScreenRecorder
 from audiorecord import AudioRecorder
@@ -16,9 +17,7 @@ from audiorecord import AudioRecorder
 def timing_adjust(vrec, arec):
     timing_adjustment = vrec.elapsed_time - arec.elapsed_time
     if timing_adjustment < 0:
-        print(
-            "WARNING: Your recorded audio time is shorter than video time."
-        )
+        print("WARNING: Your recorded audio time is shorter than video time.")
         return 0
     else:
         print("Adjust timing of audio by delaying (s)", timing_adjustment)
@@ -41,20 +40,54 @@ def insert_silent(timing_adjustment, aoutput_name):
 
 def video_audio_merge(moutput_name, aoutput_name, voutput_name):
     # cmd line
-    cmd = "ffmpeg.exe -y -i " + aoutput_name + " -i " + voutput_name + " -pix_fmt yuv420p " + moutput_name
+    cmd = (
+        "ffmpeg.exe -y -i "
+        + aoutput_name
+        + " -i "
+        + voutput_name
+        + " -pix_fmt yuv420p "
+        + moutput_name
+    )
     subprocess.call(cmd, shell=True)
 
+
+def video_convert(moutput_name, voutput_name):
+    # cmd line
+    cmd = (
+        "ffmpeg.exe -y -i "
+        + voutput_name
+        + " -pix_fmt yuv420p "
+        + moutput_name
+    )
+    subprocess.call(cmd, shell=True)
+
+
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--fps", type=float, default=3.0, help="frame per second for video recording"
+    )
+    parser.add_argument(
+        "--output", type=str, default="record.mp4", help="recorded video name and type"
+    )
+    parser.add_argument(
+        "--index", type=int, default=5, help="device index being recorded for audio"
+    )
+
+    opt = parser.parse_args()
+    print(opt)
     # frame per second
-    FPS = 3.0
-    # output video name and type
-    voutput_name = "output.mp4"
-    # output audio name and type
+    FPS = opt.fps
+    # temporary output video name and type
+    voutput_name = "video.mp4"
+    # temporary output audio name and type
     aoutput_name = "audio.wav"
     # select audio device index
-    device_index = 5  # default select device name: 'Speakers (Conexant ISST Audio)'
+    device_index = (
+        opt.index
+    )  # default select device name: 'Speakers (Conexant ISST Audio)'
     # merge video + audio name and type
-    moutput_name = "merge.mp4"
+    moutput_name = opt.output
     # create screen recorder object
     vrec = ScreenRecorder(output_name=voutput_name, fps=FPS)
     # create audio recorder object
@@ -71,10 +104,14 @@ def main():
             print("Stop recording......")
             vrec.stop()
             arec.stop()
-            timing_adjustment = timing_adjust(vrec, arec)
-            insert_silent(timing_adjustment, aoutput_name)
-            print("Merge video and audio......")
-            video_audio_merge(moutput_name, aoutput_name, voutput_name)
+            if len(arec.audio_frames) != 0:
+                timing_adjustment = timing_adjust(vrec, arec)
+                insert_silent(timing_adjustment, aoutput_name)
+                print("Merge video and audio......")
+                video_audio_merge(moutput_name, aoutput_name, voutput_name)
+            else:
+                print("No sound recorded. Transfer video......")
+                video_convert(moutput_name, voutput_name)
             break
 
 
