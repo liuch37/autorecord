@@ -40,12 +40,15 @@ class UI(QMainWindow):
 
     def clickedrecordBtn(self):
         self.flag = True
+        self.setWindowOpacity(0.5) # make window transparent during recording
 
     def clickedstopBtn(self):
         self.flag = False
+        self.setWindowOpacity(1.0) # make window visible again after recording
 
     def clickedsaveBtn(self):
         self.flag = False
+        self.setWindowOpacity(1.0) # make window visible again after recording
         self.count = 0
         self.timer_label.display(self.count)
 
