@@ -1,3 +1,4 @@
+from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QLCDNumber
 from PyQt5.QtCore import QTimer
 from PyQt5 import uic
@@ -40,17 +41,23 @@ class UI(QMainWindow):
 
     def clickedrecordBtn(self):
         self.flag = True
-        self.setWindowOpacity(0.5) # make window transparent during recording
+        self.setWindowOpacity(0.5)  # make window transparent during recording
 
     def clickedstopBtn(self):
         self.flag = False
-        self.setWindowOpacity(1.0) # make window visible again after recording
+        self.setWindowOpacity(1.0)  # make window visible again after recording
 
     def clickedsaveBtn(self):
         self.flag = False
-        self.setWindowOpacity(1.0) # make window visible again after recording
+        self.setWindowOpacity(1.0)  # make window visible again after recording
         self.count = 0
         self.timer_label.display(self.count)
+        # save to intended directory and input file name
+        dialog = QtWidgets.QFileDialog()
+        pathsave_custom = dialog.getSaveFileName(
+            None, "Select destination folder and file name", "./", "mp4 files (*.mp4)"
+        )[0]
+        print(pathsave_custom)
 
 
 if __name__ == "__main__":
