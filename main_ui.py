@@ -1,7 +1,7 @@
 from main import timing_adjust, insert_silent, video_audio_merge, video_convert
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QLCDNumber
+from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QLCDNumber, QDoubleSpinBox, QSpinBox
 from PyQt5.QtCore import QTimer
 from PyQt5 import uic
 import time
@@ -19,6 +19,8 @@ class UI(QMainWindow):
         self.record_button = self.findChild(QPushButton, "recordpushButton")
         self.stop_button = self.findChild(QPushButton, "stoppushButton")
         self.save_button = self.findChild(QPushButton, "savepushButton")
+        self.fps_spinbox = self.findChild(QDoubleSpinBox, "fpsdoubleSpinBox")
+        self.index_spinbox = self.findChild(QSpinBox, "indexspinBox")
         self.record_button.clicked.connect(self.clickedrecordBtn)
         self.stop_button.clicked.connect(self.clickedstopBtn)
         self.save_button.clicked.connect(self.clickedsaveBtn)
