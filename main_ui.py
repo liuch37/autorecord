@@ -1,3 +1,5 @@
+from main import timing_adjust, insert_silent, video_audio_merge, video_convert
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QLCDNumber
 from PyQt5.QtCore import QTimer
@@ -20,6 +22,9 @@ class UI(QMainWindow):
         self.record_button.clicked.connect(self.clickedrecordBtn)
         self.stop_button.clicked.connect(self.clickedstopBtn)
         self.save_button.clicked.connect(self.clickedsaveBtn)
+        self.record_button.setEnabled(True)
+        self.stop_button.setEnabled(True)
+        self.save_button.setEnabled(True)
 
         self.components()
 
@@ -42,16 +47,23 @@ class UI(QMainWindow):
     def clickedrecordBtn(self):
         self.flag = True
         self.setWindowOpacity(0.5)  # make window transparent during recording
+        self.record_button.setEnabled(False) # turn off record button
+        self.count = 0
+        # make a new record - start video and audio recording
 
     def clickedstopBtn(self):
         self.flag = False
         self.setWindowOpacity(1.0)  # make window visible again after recording
+        self.record_button.setEnabled(True) # turn on record button
+        # stop video and audio recording
 
     def clickedsaveBtn(self):
         self.flag = False
         self.setWindowOpacity(1.0)  # make window visible again after recording
         self.count = 0
         self.timer_label.display(self.count)
+        # merge video and audio
+
         # save to intended directory and input file name
         dialog = QtWidgets.QFileDialog()
         pathsave_custom = dialog.getSaveFileName(
