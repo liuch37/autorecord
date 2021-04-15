@@ -65,8 +65,7 @@ class ScreenRecorder_QT(QThread):
         super(ScreenRecorder_QT, self).__init__()
         self.quit_flag = False
         self.output_name = output_name
-        # self.screen_size = tuple(pg.size())
-        self.screen_size = tuple((512, 512))
+        self.screen_size = tuple(pg.size())
         self.fps = fps
         self.fourcc = cv2.VideoWriter_fourcc(*"mp4v")  # define codec
         self.out = cv2.VideoWriter(
@@ -88,11 +87,9 @@ class ScreenRecorder_QT(QThread):
 
     def record(self):
         # make a screenshot
-        # img = pg.screenshot()
-        time.sleep(0.1)  # create simulated 0.1 sec delay
+        img = pg.screenshot()
         # convert to numpy array for opencv processing
-        # frame = np.array(img)
-        frame = np.random.randint(0, 256, (512, 512, 3), dtype="uint8")
+        frame = np.array(img)
         # convert colors from BGR to RGB
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         # above image processing delay ~ 0.25 s
