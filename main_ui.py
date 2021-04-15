@@ -6,7 +6,7 @@ import threading
 import math
 from pydub import AudioSegment
 from videorecord import ScreenRecorder_QT
-from audiorecord import AudioRecorder
+#from audiorecord import AudioRecorder
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import (
@@ -149,7 +149,6 @@ class UI(QMainWindow):
         # self.vrec.stop()
         # self.arec.stop()
         self.vrec.stop()
-        # self.vrec.wait()
 
     def clickedsaveBtn(self):
         self.flag = False
