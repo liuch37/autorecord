@@ -6,7 +6,7 @@ import threading
 import math
 from pydub import AudioSegment
 from videorecord import ScreenRecorder_QT
-#from audiorecord import AudioRecorder
+from audiorecord import AudioRecorder
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import (
@@ -117,7 +117,7 @@ class UI(QMainWindow):
         self.timer_label.display(self.count)
         timer = QTimer(self)
         timer.timeout.connect(self.showTime)
-        timer.start(100)
+        timer.start(100) # every 0.1 s
 
     def showTime(self):
         if self.flag:
@@ -146,9 +146,8 @@ class UI(QMainWindow):
         self.setWindowOpacity(1.0)  # make window visible again after recording
         self.record_button.setEnabled(True)  # turn on record button
         # stop video and audio recording
-        # self.vrec.stop()
-        # self.arec.stop()
         self.vrec.stop()
+        #self.arec.stop()
 
     def clickedsaveBtn(self):
         self.flag = False
@@ -168,9 +167,8 @@ class UI(QMainWindow):
         #    print("Merge video and audio......")
         #    video_audio_merge(pathsave_custom, self.aoutput_name, self.voutput_name)
         # else:
-        #    print("No sound recorded. Transfer video......")
-        #    video_convert(pathsave_custom, self.voutput_name)
-        print("Merge video and audio......")
+        print("No sound recorded. Transfer video......")
+        video_convert(pathsave_custom, self.voutput_name)
 
         self.record_button.setEnabled(True)  # turn on record button
 
