@@ -5,16 +5,65 @@ import subprocess
 import threading
 import math
 from pydub import AudioSegment
-from videorecord import ScreenRecorder
-from audiorecord import AudioRecorder
-from main import timing_adjust, insert_silent, video_audio_merge, video_convert
+from videorecord import ScreenRecorder_QT
+#from audiorecord import AudioRecorder
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QLCDNumber, QDoubleSpinBox, QSpinBox
+from PyQt5.QtWidgets import (
+    QMainWindow,
+    QApplication,
+    QPushButton,
+    QLCDNumber,
+    QDoubleSpinBox,
+    QSpinBox,
+)
 from PyQt5.QtCore import QTimer
 from PyQt5 import uic
 import time
 import sys
+
+
+def timing_adjust(vrec, arec):
+    timing_adjustment = vrec.elapsed_time - arec.elapsed_time
+    if timing_adjustment < 0:
+        print("WARNING: Your recorded audio time is shorter than video time.")
+        return 0
+    else:
+        print("Adjust timing of audio by delaying (s)", timing_adjustment)
+        return timing_adjustment
+
+
+def insert_silent(timing_adjustment, aoutput_name):
+    # apply audio delay
+    # create silent audio segment
+    silent_segment = AudioSegment.silent(
+        duration=math.ceil(timing_adjustment * 1000)
+    )  # duration in milliseconds
+    # read wav file to an audio segment
+    audio_segment = AudioSegment.from_wav(aoutput_name)
+    # add above two audio segments
+    delay_segment = silent_segment + audio_segment
+    # save modified audio
+    delay_segment.export(aoutput_name, format="wav")
+
+
+def video_audio_merge(moutput_name, aoutput_name, voutput_name):
+    # cmd line
+    cmd = (
+        "ffmpeg.exe -y -i "
+        + aoutput_name
+        + " -i "
+        + voutput_name
+        + " -pix_fmt yuv420p "
+        + moutput_name
+    )
+    subprocess.call(cmd, shell=True)
+
+
+def video_convert(moutput_name, voutput_name):
+    # cmd line
+    cmd = "ffmpeg.exe -y -i " + voutput_name + " -pix_fmt yuv420p " + moutput_name
+    subprocess.call(cmd, shell=True)
 
 
 class UI(QMainWindow):
@@ -68,31 +117,32 @@ class UI(QMainWindow):
     def clickedrecordBtn(self):
         self.flag = True
         self.setWindowOpacity(0.5)  # make window transparent during recording
-        self.record_button.setEnabled(False) # turn off record button
+        self.record_button.setEnabled(False)  # turn off record button
         self.count = 0
         # make a new record - start video and audio recording
         # create screen recorder object
-        self.vrec = ScreenRecorder(output_name=self.voutput_name, fps=self.fps)
+        self.vrec = ScreenRecorder_QT(output_name=self.voutput_name, fps=self.fps)
         # create audio recorder object
-        self.arec = AudioRecorder(
-            output_name=self.aoutput_name, input_device_index=self.device_index, fps=self.fps
-        )
+        # self.arec = AudioRecorder(
+        #    output_name=self.aoutput_name, input_device_index=self.device_index, fps=self.fps
+        # )
         self.vrec.start()
-        self.arec.start()
+        # self.arec.start()
 
     def clickedstopBtn(self):
         self.flag = False
         self.setWindowOpacity(1.0)  # make window visible again after recording
-        self.record_button.setEnabled(True) # turn on record button
+        self.record_button.setEnabled(True)  # turn on record button
         # stop video and audio recording
+        # self.vrec.stop()
+        # self.arec.stop()
         self.vrec.stop()
-        self.arec.stop()
-
+        # self.vrec.wait()
 
     def clickedsaveBtn(self):
         self.flag = False
         self.setWindowOpacity(1.0)  # make window visible again after recording
-        self.record_button.setEnabled(False) # turn off record button
+        self.record_button.setEnabled(False)  # turn off record button
         self.count = 0
         self.timer_label.display(self.count)
         # save to intended directory and input file name
@@ -101,23 +151,24 @@ class UI(QMainWindow):
             None, "Select destination folder and file name", "./", "mp4 files (*.mp4)"
         )[0]
         # merge video and audio
-        if len(self.arec.audio_frames) != 0:
-            timing_adjustment = timing_adjust(self.vrec, self.arec)
-            insert_silent(timing_adjustment, self.aoutput_name)
-            print("Merge video and audio......")
-            video_audio_merge(pathsave_custom, self.aoutput_name, self.voutput_name)
-        else:
-            print("No sound recorded. Transfer video......")
-            video_convert(pathsave_custom, self.voutput_name)
+        # if len(self.arec.audio_frames) != 0:
+        #    timing_adjustment = timing_adjust(self.vrec, self.arec)
+        #    insert_silent(timing_adjustment, self.aoutput_name)
+        #    print("Merge video and audio......")
+        #    video_audio_merge(pathsave_custom, self.aoutput_name, self.voutput_name)
+        # else:
+        #    print("No sound recorded. Transfer video......")
+        #    video_convert(pathsave_custom, self.voutput_name)
+        print("Merge video and audio......")
 
-        self.record_button.setEnabled(True) # turn on record button
-
+        self.record_button.setEnabled(True)  # turn on record button
 
     def valuechangefps(self):
         self.fps = float(self.fps_spinbox.value())
 
     def valuechangeindex(self):
         self.device_index = int(self.index_spinbox.value())
+
 
 def main():
     app = QApplication(sys.argv)
@@ -126,6 +177,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main_thread = threading.Thread(target=main)
-    main_thread.start()
-    
+    main()
