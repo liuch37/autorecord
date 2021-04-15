@@ -6,6 +6,7 @@ import pyaudio
 import wave
 import time
 import math
+from PyQt5.QtCore import QThread
 
 
 def get_device_info(p, input_device_index):
@@ -96,3 +97,65 @@ class AudioRecorder:
     def start(self):
         audio_thread = threading.Thread(target=self.record)
         audio_thread.start()
+
+
+class AudioRecorder_QT(QThread):
+    # Audio class based on pyaudio and wave
+    def __init__(self, output_name, input_device_index, fps):
+        super(AudioRecorder_QT, self).__init__()
+        self.quit_flag = False
+        self.flag = True
+        self.input_device_index = input_device_index
+        self.format = pyaudio.paInt16
+        self.audio_filename = output_name
+        self.audio = pyaudio.PyAudio()
+        self.channels, self.rate, self.useloopback = get_device_info(
+            self.audio, self.input_device_index
+        )
+        self.frames_per_buffer = math.ceil(self.rate / fps) # matching video fps
+        self.start_time = time.time()
+        self.elapsed_time = time.time()
+
+        self.stream = self.audio.open(
+            format=self.format,
+            channels=self.channels,
+            rate=self.rate,
+            input=True,
+            input_device_index=self.input_device_index,
+            frames_per_buffer=self.frames_per_buffer,
+            as_loopback=self.useloopback,
+        )
+        self.audio_frames = []
+
+    def run(self):
+        while True:
+            if not self.quit_flag:
+                self.record()
+            else:
+                break
+        self.quit()
+
+    # Audio starts being recorded
+    def record(self):
+        self.stream.start_stream()
+        data = self.stream.read(self.frames_per_buffer)
+        if self.flag:
+            self.start_time = time.time()
+            self.flag = False
+        self.audio_frames.append(data)
+
+    # Finishes the audio recording therefore the thread too
+    def stop(self):
+        self.quit_flag = True
+        self.stream.stop_stream()
+        self.stream.close()
+        self.audio.terminate()
+        self.elapsed_time = time.time() - self.start_time
+        print("Number of audio recorded frames: ", len(self.audio_frames))
+        print("Recorded audio time duration (s): ", self.elapsed_time)
+        waveFile = wave.open(self.audio_filename, "wb")
+        waveFile.setnchannels(self.channels)
+        waveFile.setsampwidth(self.audio.get_sample_size(self.format))
+        waveFile.setframerate(self.rate)
+        waveFile.writeframes(b"".join(self.audio_frames))
+        waveFile.close()
