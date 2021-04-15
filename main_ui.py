@@ -6,7 +6,7 @@ import threading
 import math
 from pydub import AudioSegment
 from videorecord import ScreenRecorder_QT
-#from audiorecord import AudioRecorder
+from audiorecord import AudioRecorder
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import (
@@ -66,6 +66,17 @@ def video_convert(moutput_name, voutput_name):
     subprocess.call(cmd, shell=True)
 
 
+def time_converter(t):
+    millis = int(t)
+    seconds = (millis / 10) % 60
+    seconds = int(seconds)
+    minutes = (millis / (10 * 60)) % 60
+    minutes = int(minutes)
+    hours = int(millis / (10 * 60 * 60))
+
+    return str(hours) + ":" + str(minutes) + ":" + str(seconds) + "." + str(millis % 10)
+
+
 class UI(QMainWindow):
     def __init__(self):
         super(UI, self).__init__()
@@ -111,7 +122,8 @@ class UI(QMainWindow):
     def showTime(self):
         if self.flag:
             self.count += 1
-        t = self.count / 10
+        # t = self.count / 10
+        t = time_converter(self.count)
         self.timer_label.display(t)
 
     def clickedrecordBtn(self):
