@@ -49,4 +49,18 @@ python main.py --fps 3.0 --output record.mp4 --index 5
 
 ### How to Stop Recording
 
-Simply press 'q' on your terminal to stop and save your recording. This program will save 'video.mp4', 'audio.wav', and 'record.mp4' as video only, audio ony, and merged video with audio, respectively, as three output files.
+Simply press `q` on your terminal to stop and save your recording. This program will save `video.mp4`, `audio.wav`, and `record.mp4` as video only, audio ony, and merged video with audio, respectively, as three output files.
+
+### How to Run PyQT Version
+
+Simply run the below command to launch PyQT interface and start using this app. You can record, stop, and save. Note that please save your final output file within the same script folder. Each time you click `record` is a new recording.
+```
+python main_ui.py
+```
+
+### How to Install PyQT Version as a Windows App
+
+Run the below command and you will get both `build` and `dist` folders. Remember to also put `ffmpeg.exe` and `recorder.ui` in `dist` folder in order to run .exe file.
+```
+pyinstaller main_ui.py --onefile --name AutoRecorder
+```
