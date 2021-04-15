@@ -49,7 +49,7 @@ python main.py --fps 3.0 --output record.mp4 --index 5
 
 ### How to Stop Recording
 
-Simply press 'q' on your terminal to stop and save your recording. This program will save 'video.mp4', 'audio.wav', and 'record.mp4' as video only, audio ony, and merged video with audio, respectively, as three output files.
+Simply press `q` on your terminal to stop and save your recording. This program will save `video.mp4`, `audio.wav`, and `record.mp4` as video only, audio ony, and merged video with audio, respectively, as three output files.
 
 ### How to Run PyQT Version
 
