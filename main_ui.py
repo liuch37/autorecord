@@ -4,6 +4,7 @@ import pyautogui as pg
 import subprocess
 import threading
 import math
+import os
 from pathlib import Path
 from pydub import AudioSegment
 from videorecord import ScreenRecorder_QT
@@ -76,6 +77,12 @@ def time_converter(t):
     hours = int(millis / (10 * 60 * 60))
 
     return str(hours) + ":" + str(minutes) + ":" + str(seconds) + "." + str(millis % 10)
+
+def encode_video(set_fps, recorded_fps, voutput_name):
+    cmd = "ffmpeg.exe -y -r " + str(recorded_fps) + " -i " + str(voutput_name) + " -pix_fmt yuv420p -r " + str(set_fps) + " re_" + str(voutput_name)
+    subprocess.call(cmd, shell=True)
+    os.remove(str(voutput_name))
+    os.rename("re_"+str(voutput_name), str(voutput_name))
 
 
 class UI(QMainWindow):
@@ -167,6 +174,9 @@ class UI(QMainWindow):
         pathsave_custom = dialog.getSaveFileName(
             None, "Select destination folder and file name", "./", "mp4 files (*.mp4)"
         )[0]
+        # re-encode video according to measured video length
+        if Path(self.voutput_name).is_file():
+            encode_video(self.vrec.fps, self.vrec.recorded_fps, self.voutput_name)
         # merge video and audio
         if len(self.arec.audio_frames) != 0 and Path(self.aoutput_name).is_file() and Path(self.voutput_name).is_file():
             timing_adjustment = timing_adjust(self.vrec, self.arec)
