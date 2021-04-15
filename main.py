@@ -8,6 +8,9 @@ import subprocess
 import threading
 import msvcrt
 import math
+import os
+from pathlib import Path
+import pyaudio
 import argparse
 from pydub import AudioSegment
 from videorecord import ScreenRecorder
@@ -57,6 +60,13 @@ def video_convert(moutput_name, voutput_name):
     subprocess.call(cmd, shell=True)
 
 
+def encode_video(set_fps, recorded_fps, voutput_name):
+    cmd = "ffmpeg.exe -y -r " + str(recorded_fps) + " -i " + str(voutput_name) + " -pix_fmt yuv420p -r " + str(set_fps) + " re_" + str(voutput_name)
+    subprocess.call(cmd, shell=True)
+    os.remove(str(voutput_name))
+    os.rename("re_"+str(voutput_name), str(voutput_name))
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -99,14 +109,20 @@ def main():
             print("Stop recording......")
             vrec.stop()
             arec.stop()
-            if len(arec.audio_frames) != 0:
+            # re-encode video according to measured video length
+            if Path(voutput_name).is_file():
+                encode_video(vrec.fps, vrec.recorded_fps, voutput_name)
+            # merge video and audio
+            if len(arec.audio_frames) != 0 and Path(aoutput_name).is_file() and Path(voutput_name).is_file():
                 timing_adjustment = timing_adjust(vrec, arec)
                 insert_silent(timing_adjustment, aoutput_name)
                 print("Merge video and audio......")
-                video_audio_merge(moutput_name, aoutput_name, voutput_name)
-            else:
+                video_audio_merge(pathsave_custom, aoutput_name, voutput_name)
+            elif Path(voutput_name).is_file():
                 print("No sound recorded. Transfer video......")
-                video_convert(moutput_name, voutput_name)
+                video_convert(pathsave_custom, voutput_name)
+            else:
+                print("No sound and no video recorded.")
             break
 
 
