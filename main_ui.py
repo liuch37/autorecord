@@ -17,7 +17,7 @@ from PyQt5.QtWidgets import (
     QDoubleSpinBox,
     QSpinBox,
 )
-from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import QTimer, QThreadPool
 from PyQt5 import uic
 import time
 import sys
@@ -107,6 +107,8 @@ class UI(QMainWindow):
         self.fps = float(self.fps_spinbox.value())
         self.device_index = int(self.index_spinbox.value())
 
+        self.threadpool = QThreadPool()
+
         self.components()
 
         self.show()
@@ -117,7 +119,7 @@ class UI(QMainWindow):
         self.timer_label.display(self.count)
         timer = QTimer(self)
         timer.timeout.connect(self.showTime)
-        timer.start(100) # every 0.1 s
+        timer.start(100)  # every 0.1 s
 
     def showTime(self):
         if self.flag:
@@ -136,10 +138,12 @@ class UI(QMainWindow):
         self.vrec = ScreenRecorder_QT(output_name=self.voutput_name, fps=self.fps)
         # create audio recorder object
         self.arec = AudioRecorder_QT(
-           output_name=self.aoutput_name, input_device_index=self.device_index, fps=self.fps
+            output_name=self.aoutput_name,
+            input_device_index=self.device_index,
+            fps=self.fps,
         )
-        self.vrec.start()
-        self.arec.start()
+        self.threadpool.start(self.vrec)
+        self.threadpool.start(self.arec)
 
     def clickedstopBtn(self):
         self.flag = False

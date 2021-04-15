@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 import pyautogui as pg
 import time
-from PyQt5.QtCore import QThread
+from PyQt5.QtCore import QThread, QRunnable
 
 
 class ScreenRecorder:
@@ -60,7 +60,7 @@ class ScreenRecorder:
             pass
 
 
-class ScreenRecorder_QT(QThread):
+class ScreenRecorder_QT(QRunnable):
     def __init__(self, output_name, fps):
         super(ScreenRecorder_QT, self).__init__()
         self.quit_flag = False
@@ -82,7 +82,6 @@ class ScreenRecorder_QT(QThread):
                 self.record()
             else:
                 break
-        self.quit()
 
     def record(self):
         # make a screenshot

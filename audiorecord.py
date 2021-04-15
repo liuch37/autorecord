@@ -6,7 +6,7 @@ import pyaudio
 import wave
 import time
 import math
-from PyQt5.QtCore import QThread
+from PyQt5.QtCore import QThread, QRunnable
 
 
 def get_device_info(p, input_device_index):
@@ -46,7 +46,7 @@ class AudioRecorder:
         self.channels, self.rate, self.useloopback = get_device_info(
             self.audio, self.input_device_index
         )
-        self.frames_per_buffer = math.ceil(self.rate / fps) # matching video fps
+        self.frames_per_buffer = math.ceil(self.rate / fps)  # matching video fps
         self.start_time = time.time()
         self.elapsed_time = time.time()
 
@@ -99,7 +99,7 @@ class AudioRecorder:
         audio_thread.start()
 
 
-class AudioRecorder_QT(QThread):
+class AudioRecorder_QT(QRunnable):
     # Audio class based on pyaudio and wave
     def __init__(self, output_name, input_device_index, fps):
         super(AudioRecorder_QT, self).__init__()
@@ -112,7 +112,7 @@ class AudioRecorder_QT(QThread):
         self.channels, self.rate, self.useloopback = get_device_info(
             self.audio, self.input_device_index
         )
-        self.frames_per_buffer = math.ceil(self.rate / fps) # matching video fps
+        self.frames_per_buffer = math.ceil(self.rate / fps)  # matching video fps
         self.start_time = time.time()
         self.elapsed_time = time.time()
 
@@ -133,7 +133,6 @@ class AudioRecorder_QT(QThread):
                 self.record()
             else:
                 break
-        self.quit()
 
     # Audio starts being recorded
     def record(self):
