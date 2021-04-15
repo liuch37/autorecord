@@ -151,8 +151,8 @@ class UI(QMainWindow):
         self.setWindowOpacity(1.0)  # make window visible again after recording
         self.record_button.setEnabled(True)  # turn on record button
         # stop video and audio recording
-        self.vrec.quit_flag = True
         self.arec.quit_flag = True
+        self.vrec.quit_flag = True
         self.threadpool.clear()
 
     def clickedsaveBtn(self):
