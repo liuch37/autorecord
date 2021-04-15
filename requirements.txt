@@ -3,3 +3,4 @@ opencv-python
 pyautogui
 pydub
 pyqt5
+pyinstaller
