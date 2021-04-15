@@ -82,7 +82,6 @@ class ScreenRecorder_QT(QThread):
                 self.record()
             else:
                 break
-
         self.quit()
 
     def record(self):

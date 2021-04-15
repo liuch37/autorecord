@@ -6,7 +6,7 @@ import threading
 import math
 from pydub import AudioSegment
 from videorecord import ScreenRecorder_QT
-from audiorecord import AudioRecorder
+from audiorecord import AudioRecorder_QT
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import (
@@ -135,11 +135,11 @@ class UI(QMainWindow):
         # create screen recorder object
         self.vrec = ScreenRecorder_QT(output_name=self.voutput_name, fps=self.fps)
         # create audio recorder object
-        # self.arec = AudioRecorder(
-        #    output_name=self.aoutput_name, input_device_index=self.device_index, fps=self.fps
-        # )
+        self.arec = AudioRecorder_QT(
+           output_name=self.aoutput_name, input_device_index=self.device_index, fps=self.fps
+        )
         self.vrec.start()
-        # self.arec.start()
+        self.arec.start()
 
     def clickedstopBtn(self):
         self.flag = False
@@ -147,7 +147,7 @@ class UI(QMainWindow):
         self.record_button.setEnabled(True)  # turn on record button
         # stop video and audio recording
         self.vrec.stop()
-        #self.arec.stop()
+        self.arec.stop()
 
     def clickedsaveBtn(self):
         self.flag = False
@@ -161,14 +161,14 @@ class UI(QMainWindow):
             None, "Select destination folder and file name", "./", "mp4 files (*.mp4)"
         )[0]
         # merge video and audio
-        # if len(self.arec.audio_frames) != 0:
-        #    timing_adjustment = timing_adjust(self.vrec, self.arec)
-        #    insert_silent(timing_adjustment, self.aoutput_name)
-        #    print("Merge video and audio......")
-        #    video_audio_merge(pathsave_custom, self.aoutput_name, self.voutput_name)
-        # else:
-        print("No sound recorded. Transfer video......")
-        video_convert(pathsave_custom, self.voutput_name)
+        if len(self.arec.audio_frames) != 0:
+            timing_adjustment = timing_adjust(self.vrec, self.arec)
+            insert_silent(timing_adjustment, self.aoutput_name)
+            print("Merge video and audio......")
+            video_audio_merge(pathsave_custom, self.aoutput_name, self.voutput_name)
+        else:
+            print("No sound recorded. Transfer video......")
+            video_convert(pathsave_custom, self.voutput_name)
 
         self.record_button.setEnabled(True)  # turn on record button
 
