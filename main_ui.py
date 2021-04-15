@@ -6,6 +6,7 @@ import threading
 import math
 import os
 from pathlib import Path
+import pyaudio
 from pydub import AudioSegment
 from videorecord import ScreenRecorder_QT
 from audiorecord import AudioRecorder_QT
@@ -119,7 +120,20 @@ class UI(QMainWindow):
 
         self.components()
 
+        self.audio_device_show()
+
         self.show()
+
+    def audio_device_show(self):
+        p = pyaudio.PyAudio()
+        print("Number of device: ", p.get_device_count())
+        for i in range(p.get_device_count()):
+            device_info = p.get_device_info_by_index(i)
+            print(
+                "Index: {} has device name: {}".format(
+                    device_info["index"], device_info["name"]
+                )
+            )
 
     def components(self):
         self.count = 0
