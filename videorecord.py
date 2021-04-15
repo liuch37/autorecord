@@ -23,6 +23,7 @@ class ScreenRecorder:
         self.frame_counts = 1
         self.start_time = time.time()
         self.elapsed_time = time.time()
+        self.recorded_fps = fps
 
     def record(self):
         flag = True
@@ -52,10 +53,10 @@ class ScreenRecorder:
             self.out.release()
             self.elapsed_time = time.time() - self.start_time
             frame_counts = self.frame_counts
-            recorded_fps = frame_counts / self.elapsed_time
+            self.recorded_fps = frame_counts / self.elapsed_time
             print("Total video frames " + str(frame_counts))
             print("Video elapsed time " + str(self.elapsed_time))
-            print("Video recorded fps " + str(recorded_fps))
+            print("Video recorded fps " + str(self.recorded_fps))
         else:
             pass
 
