@@ -188,7 +188,8 @@ class UI(QMainWindow):
 def main():
     app = QApplication(sys.argv)
     window = UI()
-    app.exec_()
+    ret = app.exec_()
+    sys.exit(ret)
 
 
 if __name__ == "__main__":
