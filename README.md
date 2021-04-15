@@ -58,7 +58,7 @@ Simply run the below command to launch PyQT interface and start using this app. 
 python main_ui.py
 ```
 
-### How to Install PyQT Version install a Windows App
+### How to Install PyQT Version as a Windows App
 
 Run the below command and you will get both `build` and `dist` folders. Remember to also put `ffmpeg.exe` and `recorder.ui` in `dist` folder in order to run .exe file.
 ```
