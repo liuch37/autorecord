@@ -85,7 +85,6 @@ class ScreenRecorder_QT(QThread):
                 break
 
         self.quit()
-        # self.wait()
 
     def record(self):
         # make a screenshot
