@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 import pyautogui as pg
 import time
-from PyQt5.QtCore import QThread, QRunnable
+from PyQt5.QtCore import QThread, QRunnable, pyqtSlot
 
 
 class ScreenRecorder:
@@ -76,11 +76,13 @@ class ScreenRecorder_QT(QRunnable):
         self.start_time = time.time()
         self.elapsed_time = time.time()
 
+    @pyqtSlot()
     def run(self):
         while True:
             if not self.quit_flag:
                 self.record()
             else:
+                self.stop()
                 break
 
     def record(self):
@@ -96,7 +98,6 @@ class ScreenRecorder_QT(QRunnable):
         self.frame_counts += 1
 
     def stop(self):
-        self.quit_flag = True
         self.out.release()
         self.elapsed_time = time.time() - self.start_time
         frame_counts = self.frame_counts

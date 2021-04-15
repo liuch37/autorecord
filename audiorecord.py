@@ -6,7 +6,7 @@ import pyaudio
 import wave
 import time
 import math
-from PyQt5.QtCore import QThread, QRunnable
+from PyQt5.QtCore import QThread, QRunnable, pyqtSlot
 
 
 def get_device_info(p, input_device_index):
@@ -127,11 +127,13 @@ class AudioRecorder_QT(QRunnable):
         )
         self.audio_frames = []
 
+    @pyqtSlot()
     def run(self):
         while True:
             if not self.quit_flag:
                 self.record()
             else:
+                self.stop()
                 break
 
     # Audio starts being recorded
@@ -145,7 +147,6 @@ class AudioRecorder_QT(QRunnable):
 
     # Finishes the audio recording therefore the thread too
     def stop(self):
-        self.quit_flag = True
         self.stream.stop_stream()
         self.stream.close()
         self.audio.terminate()
