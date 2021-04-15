@@ -4,6 +4,7 @@ import pyautogui as pg
 import subprocess
 import threading
 import math
+from pathlib import Path
 from pydub import AudioSegment
 from videorecord import ScreenRecorder_QT
 from audiorecord import AudioRecorder_QT
@@ -167,14 +168,16 @@ class UI(QMainWindow):
             None, "Select destination folder and file name", "./", "mp4 files (*.mp4)"
         )[0]
         # merge video and audio
-        if len(self.arec.audio_frames) != 0:
+        if len(self.arec.audio_frames) != 0 and Path(self.aoutput_name).is_file() and Path(self.voutput_name).is_file():
             timing_adjustment = timing_adjust(self.vrec, self.arec)
             insert_silent(timing_adjustment, self.aoutput_name)
             print("Merge video and audio......")
             video_audio_merge(pathsave_custom, self.aoutput_name, self.voutput_name)
-        else:
+        elif Path(self.voutput_name).is_file():
             print("No sound recorded. Transfer video......")
             video_convert(pathsave_custom, self.voutput_name)
+        else:
+            print("No sound and no video recorded.")
 
         self.record_button.setEnabled(True)  # turn on record button
 
