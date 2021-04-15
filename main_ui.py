@@ -134,6 +134,7 @@ class UI(QMainWindow):
         self.record_button.setEnabled(False)  # turn off record button
         self.count = 0
         # make a new record - start video and audio recording
+        self.threadpool.clear()
         # create screen recorder object
         self.vrec = ScreenRecorder_QT(output_name=self.voutput_name, fps=self.fps)
         # create audio recorder object
@@ -150,8 +151,9 @@ class UI(QMainWindow):
         self.setWindowOpacity(1.0)  # make window visible again after recording
         self.record_button.setEnabled(True)  # turn on record button
         # stop video and audio recording
-        self.vrec.stop()
-        self.arec.stop()
+        self.vrec.quit_flag = True
+        self.arec.quit_flag = True
+        self.threadpool.clear()
 
     def clickedsaveBtn(self):
         self.flag = False
