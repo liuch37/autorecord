@@ -63,5 +63,5 @@ python main_ui.py
 
 Run the below pyinstaller command and you will get both `build` and `dist` folders. Remember to also put `ffmpeg.exe` and `recorder.ui` in `dist` folder in order to run the .exe file.
 ```
-pyinstaller main_ui.py --onefile --name AutoRecorder
+pyinstaller main_ui.py --onefile --name AutoRecorder --noconsole
 ```
