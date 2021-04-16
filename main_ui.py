@@ -154,7 +154,6 @@ class UI(QMainWindow):
         self.flag = True
         self.setWindowOpacity(0.5)  # make window transparent during recording
         self.record_button.setEnabled(False)  # turn off record button
-        self.stop_button.setEnabled(True) # turn on stop button
         self.save_button.setEnabled(False) # turn off save button
         self.count = 0
         # make a new record - start video and audio recording
@@ -169,22 +168,25 @@ class UI(QMainWindow):
         )
         self.threadpool.start(self.vrec)
         self.threadpool.start(self.arec)
+        self.stop_button.setEnabled(True) # turn on stop button
 
     def clickedstopBtn(self):
         self.flag = False
         self.setWindowOpacity(1.0)  # make window visible again after recording
-        self.record_button.setEnabled(True)  # turn on record button
-        self.stop_button.setEnabled(False) # turn off stop button
-        self.save_button.setEnabled(True) # turn on save button
         # stop video and audio recording
         self.arec.quit_flag = True
         self.vrec.quit_flag = True
         self.threadpool.clear()
+        self.record_button.setEnabled(True)  # turn on record button
+        self.stop_button.setEnabled(False) # turn off stop button
+        self.save_button.setEnabled(True) # turn on save button
 
     def clickedsaveBtn(self):
         self.flag = False
         self.setWindowOpacity(1.0)  # make window visible again after recording
         self.record_button.setEnabled(False)  # turn off record button
+        self.stop_button.setEnabled(False) # turn off stop button
+        self.save_button.setEnabled(False) # turn off save button
         self.count = 0
         self.timer_label.display(self.count)
         # save to intended directory and input file name
