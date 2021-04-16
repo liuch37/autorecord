@@ -105,8 +105,8 @@ class UI(QMainWindow):
         self.fps_spinbox.valueChanged.connect(self.valuechangefps)
         self.index_spinbox.valueChanged.connect(self.valuechangeindex)
         self.record_button.setEnabled(True)
-        self.stop_button.setEnabled(True)
-        self.save_button.setEnabled(True)
+        self.stop_button.setEnabled(False)
+        self.save_button.setEnabled(False)
 
         # temporary output video name and type
         self.voutput_name = "video.mp4"
@@ -154,6 +154,8 @@ class UI(QMainWindow):
         self.flag = True
         self.setWindowOpacity(0.5)  # make window transparent during recording
         self.record_button.setEnabled(False)  # turn off record button
+        self.stop_button.setEnabled(True) # turn on stop button
+        self.save_button.setEnabled(False) # turn off save button
         self.count = 0
         # make a new record - start video and audio recording
         self.threadpool.clear()
@@ -172,6 +174,8 @@ class UI(QMainWindow):
         self.flag = False
         self.setWindowOpacity(1.0)  # make window visible again after recording
         self.record_button.setEnabled(True)  # turn on record button
+        self.stop_button.setEnabled(False) # turn off stop button
+        self.save_button.setEnabled(True) # turn on save button
         # stop video and audio recording
         self.arec.quit_flag = True
         self.vrec.quit_flag = True
@@ -204,6 +208,8 @@ class UI(QMainWindow):
             print("No sound and no video recorded.")
 
         self.record_button.setEnabled(True)  # turn on record button
+        self.stop_button.setEnabled(False) # turn off stop button
+        self.save_button.setEnabled(False) # turn off save button
 
     def valuechangefps(self):
         self.fps = float(self.fps_spinbox.value())
