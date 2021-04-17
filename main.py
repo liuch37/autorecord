@@ -18,7 +18,7 @@ from audiorecord import AudioRecorder
 
 
 def timing_adjust(vrec, arec):
-    timing_adjustment = vrec.elapsed_time - arec.elapsed_time
+    timing_adjustment = vrec.recorded_duration - arec.recorded_duration
     if timing_adjustment < 0:
         print("WARNING: Your recorded audio time is shorter than video time.")
         return 0
@@ -117,10 +117,10 @@ def main():
                 timing_adjustment = timing_adjust(vrec, arec)
                 insert_silent(timing_adjustment, aoutput_name)
                 print("Merge video and audio......")
-                video_audio_merge(pathsave_custom, aoutput_name, voutput_name)
+                video_audio_merge(moutput_name, aoutput_name, voutput_name)
             elif Path(voutput_name).is_file():
                 print("No sound recorded. Transfer video......")
-                video_convert(pathsave_custom, voutput_name)
+                video_convert(moutput_name, voutput_name)
             else:
                 print("No sound and no video recorded.")
             break

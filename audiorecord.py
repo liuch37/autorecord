@@ -60,6 +60,7 @@ class AudioRecorder:
             as_loopback=self.useloopback,
         )
         self.audio_frames = []
+        self.recorded_duration = 0
 
     # Audio starts being recorded
     def record(self):
@@ -82,8 +83,10 @@ class AudioRecorder:
             self.stream.close()
             self.audio.terminate()
             self.elapsed_time = time.time() - self.start_time
+            self.recorded_duration = len(self.audio_frames) * self.frames_per_buffer / self.rate
             print("Number of audio recorded frames: ", len(self.audio_frames))
-            print("Recorded audio time duration (s): ", self.elapsed_time)
+            print("Audio elapsed time (s): ", self.elapsed_time)
+            print("Audio recorded duration (s): ", self.recorded_duration)
             waveFile = wave.open(self.audio_filename, "wb")
             waveFile.setnchannels(self.channels)
             waveFile.setsampwidth(self.audio.get_sample_size(self.format))
