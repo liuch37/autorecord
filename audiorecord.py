@@ -46,7 +46,8 @@ class AudioRecorder:
         self.channels, self.rate, self.useloopback = get_device_info(
             self.audio, self.input_device_index
         )
-        self.frames_per_buffer = math.ceil(self.rate / fps)  # matching video fps
+        #self.frames_per_buffer = math.ceil(self.rate / fps)  # matching video fps
+        self.frames_per_buffer = 1024
         self.start_time = time.time()
         self.elapsed_time = time.time()
 
