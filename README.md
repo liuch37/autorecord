@@ -65,3 +65,7 @@ Run the below pyinstaller command and you will get both `build` and `dist` folde
 ```
 pyinstaller main_ui.py --onefile --name AutoRecorder --noconsole
 ```
+
+## References
+
+[1] https://github.com/JRodrigoF/AVrecordeR
