@@ -19,6 +19,11 @@ from PyQt5.QtWidgets import (
     QLCDNumber,
     QDoubleSpinBox,
     QSpinBox,
+    QCheckBox,
+    QLabel,
+    QWidget,
+    QVBoxLayout,
+    QLineEdit,
 )
 from PyQt5.QtCore import QTimer, QThreadPool
 from PyQt5 import uic
@@ -79,11 +84,39 @@ def time_converter(t):
 
     return str(hours) + ":" + str(minutes) + ":" + str(seconds) + "." + str(millis % 10)
 
+
 def encode_video(set_fps, recorded_fps, voutput_name):
-    cmd = "ffmpeg.exe -y -r " + str(recorded_fps) + " -i " + str(voutput_name) + " -pix_fmt yuv420p -r " + str(set_fps) + " re_" + str(voutput_name)
+    cmd = (
+        "ffmpeg.exe -y -r "
+        + str(recorded_fps)
+        + " -i "
+        + str(voutput_name)
+        + " -pix_fmt yuv420p -r "
+        + str(set_fps)
+        + " re_"
+        + str(voutput_name)
+    )
     subprocess.call(cmd, shell=True)
     os.remove(str(voutput_name))
-    os.rename("re_"+str(voutput_name), str(voutput_name))
+    os.rename("re_" + str(voutput_name), str(voutput_name))
+
+
+class Timer_UI(QWidget):
+    """
+    This "window" is a QWidget. If it has no parent,
+    it will appear as a free-floating window.
+    """
+
+    def __init__(self):
+        super().__init__()
+        layout = QVBoxLayout()
+        self.label = QLabel("Enter time to record (minutes)")
+        self.button = QPushButton("OK")
+        self.line = QLineEdit("")
+        layout.addWidget(self.label)
+        layout.addWidget(self.line)
+        layout.addWidget(self.button)
+        self.setLayout(layout)
 
 
 class UI(QMainWindow):
@@ -99,14 +132,17 @@ class UI(QMainWindow):
         self.save_button = self.findChild(QPushButton, "savepushButton")
         self.fps_spinbox = self.findChild(QDoubleSpinBox, "fpsdoubleSpinBox")
         self.index_spinbox = self.findChild(QSpinBox, "indexspinBox")
+        self.timer_checkbox = self.findChild(QCheckBox, "timercheckBox")
         self.record_button.clicked.connect(self.clickedrecordBtn)
         self.stop_button.clicked.connect(self.clickedstopBtn)
         self.save_button.clicked.connect(self.clickedsaveBtn)
         self.fps_spinbox.valueChanged.connect(self.valuechangefps)
         self.index_spinbox.valueChanged.connect(self.valuechangeindex)
+        self.timer_checkbox.stateChanged.connect(self.clickedtimer)
         self.record_button.setEnabled(True)
         self.stop_button.setEnabled(False)
         self.save_button.setEnabled(False)
+        self.timer_checkbox.setChecked(False)
 
         # temporary output video name and type
         self.voutput_name = "video.mp4"
@@ -123,6 +159,10 @@ class UI(QMainWindow):
         self.audio_device_show()
 
         self.show()
+
+        self.timerwindow = Timer_UI()
+        self.timerwindow.button.clicked.connect(self.clickedconfirm)
+        self.recorded_time = 0
 
     def audio_device_show(self):
         p = pyaudio.PyAudio()
@@ -154,7 +194,7 @@ class UI(QMainWindow):
         self.flag = True
         self.setWindowOpacity(0.5)  # make window transparent during recording
         self.record_button.setEnabled(False)  # turn off record button
-        self.save_button.setEnabled(False) # turn off save button
+        self.save_button.setEnabled(False)  # turn off save button
         self.count = 0
         # make a new record - start video and audio recording
         self.threadpool.clear()
@@ -168,7 +208,7 @@ class UI(QMainWindow):
         )
         self.threadpool.start(self.vrec)
         self.threadpool.start(self.arec)
-        self.stop_button.setEnabled(True) # turn on stop button
+        self.stop_button.setEnabled(True)  # turn on stop button
 
     def clickedstopBtn(self):
         self.flag = False
@@ -178,15 +218,15 @@ class UI(QMainWindow):
         self.vrec.quit_flag = True
         self.threadpool.clear()
         self.record_button.setEnabled(True)  # turn on record button
-        self.stop_button.setEnabled(False) # turn off stop button
-        self.save_button.setEnabled(True) # turn on save button
+        self.stop_button.setEnabled(False)  # turn off stop button
+        self.save_button.setEnabled(True)  # turn on save button
 
     def clickedsaveBtn(self):
         self.flag = False
         self.setWindowOpacity(1.0)  # make window visible again after recording
         self.record_button.setEnabled(False)  # turn off record button
-        self.stop_button.setEnabled(False) # turn off stop button
-        self.save_button.setEnabled(False) # turn off save button
+        self.stop_button.setEnabled(False)  # turn off stop button
+        self.save_button.setEnabled(False)  # turn off save button
         self.count = 0
         self.timer_label.display(self.count)
         # save to intended directory and input file name
@@ -198,7 +238,11 @@ class UI(QMainWindow):
         if Path(self.voutput_name).is_file():
             encode_video(self.vrec.fps, self.vrec.recorded_fps, self.voutput_name)
         # merge video and audio
-        if len(self.arec.audio_frames) != 0 and Path(self.aoutput_name).is_file() and Path(self.voutput_name).is_file():
+        if (
+            len(self.arec.audio_frames) != 0
+            and Path(self.aoutput_name).is_file()
+            and Path(self.voutput_name).is_file()
+        ):
             timing_adjustment = timing_adjust(self.vrec, self.arec)
             insert_silent(timing_adjustment, self.aoutput_name)
             print("Merge video and audio......")
@@ -210,14 +254,23 @@ class UI(QMainWindow):
             print("No sound and no video recorded.")
 
         self.record_button.setEnabled(True)  # turn on record button
-        self.stop_button.setEnabled(False) # turn off stop button
-        self.save_button.setEnabled(False) # turn off save button
+        self.stop_button.setEnabled(False)  # turn off stop button
+        self.save_button.setEnabled(False)  # turn off save button
 
     def valuechangefps(self):
         self.fps = float(self.fps_spinbox.value())
 
     def valuechangeindex(self):
         self.device_index = int(self.index_spinbox.value())
+
+    def clickedtimer(self):
+        if self.timer_checkbox.isChecked():
+            self.timerwindow.show()
+
+    def clickedconfirm(self):
+        self.recorded_time = int(float(self.timerwindow.line.text()))
+        self.timerwindow.close()
+        print("The recorded time is set to:", self.recorded_time)
 
 
 def main():
