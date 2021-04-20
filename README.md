@@ -53,7 +53,7 @@ Simply press `q` on your terminal to stop and save your recording. This program 
 
 ### How to Run PyQT Version
 
-Simply run the below command to launch PyQT interface and start using this app. You can `Record`, `Stop`, and `Save`. When `Timer` is checked, you will enter a duration in minutes to indicate how long you want to have an end-to-end recording, without having to press `Stop` and `Save` after recording is finished. In this case `output.mp4` will be saved as your final merged output file. Note that please save your final output file within the same direcotry as `main_ui.py`. Each time you click `Record` is a new recording.
+Simply run the below command to launch PyQT interface and start using this app. You can `Record`, `Stop`, and `Save`. When `Timer` is checked, you will enter a duration in minutes to indicate how long you want to have an end-to-end recording, without having to press `Stop` and `Save` after recording is finished. In this case `output.mp4` will be saved as your final merged output file. If `Timer` is not checked, please save your final output file within the same direcotry as `main_ui.py` after pressing `Save`. Each time you click `Record` is a new recording.
 
 ```
 python main_ui.py
