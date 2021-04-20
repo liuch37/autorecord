@@ -269,6 +269,7 @@ class UI(QMainWindow):
 
     def clickedconfirm(self):
         self.recorded_time = int(float(self.timerwindow.line.text()))
+        self.timerwindow.line.setText("")
         self.timerwindow.close()
         print("The recorded time is set to:", self.recorded_time)
 
