@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>350</width>
+    <width>362</width>
     <height>167</height>
    </rect>
   </property>
@@ -16,7 +16,7 @@
   <widget class="QPushButton" name="recordpushButton">
    <property name="geometry">
     <rect>
-     <x>50</x>
+     <x>70</x>
      <y>40</y>
      <width>121</width>
      <height>51</height>
@@ -29,7 +29,7 @@
   <widget class="QPushButton" name="stoppushButton">
    <property name="geometry">
     <rect>
-     <x>200</x>
+     <x>220</x>
      <y>40</y>
      <width>131</width>
      <height>51</height>
@@ -42,7 +42,7 @@
   <widget class="QPushButton" name="savepushButton">
    <property name="geometry">
     <rect>
-     <x>50</x>
+     <x>70</x>
      <y>100</y>
      <width>121</width>
      <height>51</height>
@@ -55,7 +55,7 @@
   <widget class="QLCDNumber" name="lcdNumber">
    <property name="geometry">
     <rect>
-     <x>210</x>
+     <x>230</x>
      <y>100</y>
      <width>111</width>
      <height>41</height>
@@ -77,9 +77,9 @@
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>90</x>
+     <x>100</x>
      <y>10</y>
-     <width>31</width>
+     <width>41</width>
      <height>21</height>
     </rect>
    </property>
@@ -98,7 +98,7 @@
   <widget class="QDoubleSpinBox" name="fpsdoubleSpinBox">
    <property name="geometry">
     <rect>
-     <x>130</x>
+     <x>140</x>
      <y>10</y>
      <width>71</width>
      <height>22</height>
@@ -116,7 +116,7 @@
     <rect>
      <x>220</x>
      <y>10</y>
-     <width>41</width>
+     <width>51</width>
      <height>21</height>
     </rect>
    </property>
@@ -135,7 +135,7 @@
   <widget class="QSpinBox" name="indexspinBox">
    <property name="geometry">
     <rect>
-     <x>260</x>
+     <x>290</x>
      <y>10</y>
      <width>51</width>
      <height>22</height>
@@ -150,13 +150,13 @@
     <rect>
      <x>20</x>
      <y>10</y>
-     <width>61</width>
+     <width>71</width>
      <height>20</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <pointsize>9</pointsize>
+     <pointsize>8</pointsize>
     </font>
    </property>
    <property name="text">
