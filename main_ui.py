@@ -25,7 +25,7 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
     QLineEdit,
 )
-from PyQt5.QtCore import QTimer, QThreadPool
+from PyQt5.QtCore import QTimer, QThreadPool, QRunnable, pyqtSlot
 from PyQt5 import uic
 import time
 import sys
@@ -112,7 +112,7 @@ class Timer_UI(QWidget):
         layout = QVBoxLayout()
         self.label = QLabel("Enter time to record (minutes)")
         self.button = QPushButton("OK")
-        self.line = QLineEdit("")
+        self.line = QLineEdit("-1")
         layout.addWidget(self.label)
         layout.addWidget(self.line)
         layout.addWidget(self.button)
@@ -162,7 +162,7 @@ class UI(QMainWindow):
 
         self.timerwindow = Timer_UI()
         self.timerwindow.button.clicked.connect(self.clickedconfirm)
-        self.recorded_time = 0
+        self.recorded_time = -1
 
     def audio_device_show(self):
         p = pyaudio.PyAudio()
@@ -189,26 +189,52 @@ class UI(QMainWindow):
         # t = self.count / 10
         t = time_converter(self.count)
         self.timer_label.display(t)
+        if self.timer_checkbox.isChecked() and self.count == int(
+            self.recorded_time * 10 * 60
+        ):
+            self.clickedstopBtn()
+            self.clickedsaveBtn()
 
     def clickedrecordBtn(self):
-        self.flag = True
-        self.setWindowOpacity(0.5)  # make window transparent during recording
-        self.record_button.setEnabled(False)  # turn off record button
-        self.save_button.setEnabled(False)  # turn off save button
-        self.count = 0
-        # make a new record - start video and audio recording
-        self.threadpool.clear()
-        # create screen recorder object
-        self.vrec = ScreenRecorder_QT(output_name=self.voutput_name, fps=self.fps)
-        # create audio recorder object
-        self.arec = AudioRecorder_QT(
-            output_name=self.aoutput_name,
-            input_device_index=self.device_index,
-            fps=self.fps,
-        )
-        self.threadpool.start(self.vrec)
-        self.threadpool.start(self.arec)
-        self.stop_button.setEnabled(True)  # turn on stop button
+        if self.timer_checkbox.isChecked():
+            # autorecord for end-to-end recording
+            self.flag = True
+            self.setWindowOpacity(0.5)  # make window transparent during recording
+            self.record_button.setEnabled(False)  # turn off record button
+            self.stop_button.setEnabled(False)  # turn off stop button
+            self.save_button.setEnabled(False)  # turn off save button
+            self.count = 0
+            # make a new record - start video and audio recording
+            self.threadpool.clear()
+            # create screen recorder object
+            self.vrec = ScreenRecorder_QT(output_name=self.voutput_name, fps=self.fps)
+            # create audio recorder object
+            self.arec = AudioRecorder_QT(
+                output_name=self.aoutput_name,
+                input_device_index=self.device_index,
+                fps=self.fps,
+            )
+            self.threadpool.start(self.vrec)
+            self.threadpool.start(self.arec)
+        else:
+            self.flag = True
+            self.setWindowOpacity(0.5)  # make window transparent during recording
+            self.record_button.setEnabled(False)  # turn off record button
+            self.save_button.setEnabled(False)  # turn off save button
+            self.count = 0
+            # make a new record - start video and audio recording
+            self.threadpool.clear()
+            # create screen recorder object
+            self.vrec = ScreenRecorder_QT(output_name=self.voutput_name, fps=self.fps)
+            # create audio recorder object
+            self.arec = AudioRecorder_QT(
+                output_name=self.aoutput_name,
+                input_device_index=self.device_index,
+                fps=self.fps,
+            )
+            self.threadpool.start(self.vrec)
+            self.threadpool.start(self.arec)
+            self.stop_button.setEnabled(True)  # turn on stop button
 
     def clickedstopBtn(self):
         self.flag = False
@@ -230,10 +256,16 @@ class UI(QMainWindow):
         self.count = 0
         self.timer_label.display(self.count)
         # save to intended directory and input file name
-        dialog = QtWidgets.QFileDialog()
-        pathsave_custom = dialog.getSaveFileName(
-            None, "Select destination folder and file name", "./", "mp4 files (*.mp4)"
-        )[0]
+        if self.timer_checkbox.isChecked() == False:
+            dialog = QtWidgets.QFileDialog()
+            pathsave_custom = dialog.getSaveFileName(
+                None,
+                "Select destination folder and file name",
+                "./",
+                "mp4 files (*.mp4)",
+            )[0]
+        else:
+            pathsave_custom = "./output.mp4"
         # re-encode video according to measured video length
         if Path(self.voutput_name).is_file():
             encode_video(self.vrec.fps, self.vrec.recorded_fps, self.voutput_name)
@@ -268,10 +300,10 @@ class UI(QMainWindow):
             self.timerwindow.show()
 
     def clickedconfirm(self):
-        self.recorded_time = int(float(self.timerwindow.line.text()))
-        self.timerwindow.line.setText("")
+        self.recorded_time = float(self.timerwindow.line.text())
+        self.timerwindow.line.setText("-1")
         self.timerwindow.close()
-        print("The recorded time is set to:", self.recorded_time)
+        print("The recorded time (minutes) is set to:", self.recorded_time)
 
 
 def main():
